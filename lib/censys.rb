@@ -69,5 +69,3 @@ module Censys
 
   end
 end
-
-x = Censys::Api.new.search("intrigue")
