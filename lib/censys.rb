@@ -21,11 +21,13 @@ module Censys
 
     def initialize(uid=nil,secret=nil, options={})
       @uri = "https://www.censys.io/api/v1"
+      @uid = uid
+      @secret = secret
 
       # TODO - allow proxy configuration here...
 
       # if we weren't passed a config
-      unless uid && secret
+      unless @uid && @secret
         # check to see if a config file exists
         config_file_path = "#{File.dirname(__FILE__)}/../config/config.json"
         if File.exist? config_file_path
