@@ -1,4 +1,3 @@
-require 'rest-client'
 # Working Python
 =begin
 import sys
@@ -14,6 +13,7 @@ for name, series in res.json()["raw_series"].iteritems():
 =end
 
 require_relative "censys/version"
+require 'rest-client'
 require "json"
 
 module Censys
@@ -24,11 +24,17 @@ module Censys
 
       # TODO - allow proxy configuration here...
 
+      # if we weren't passed a config
       unless uid && secret
-        config_file = "#{File.dirname(__FILE__)}/../config/config.json"
-        config = JSON.parse(File.open(config_file,"r").read)
-        @uid = config["uid"]
-        @secret = config["secret"]
+        # check to see if a config file exists
+        config_file_path = "#{File.dirname(__FILE__)}/../config/config.json"
+        if File.exist? config_file_path
+          config = JSON.parse(File.open(config_file_path,"r").read)
+          @uid = config["uid"]
+          @secret = config["secret"]
+        else
+          raise "Unable to continue... no credentials!"
+        end
       end
 
     end
