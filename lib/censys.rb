@@ -52,7 +52,9 @@ module Censys
     results = JSON.parse(response.to_str)
     end
 
-    def search(keyword)
+    def search(keyword,search_type="certificates")
+      # search_type should be one of ipv4, websites, certificates
+
       # "80.http.get.headers.server: Apache"
       payload = {
         "query": keyword
@@ -60,12 +62,13 @@ module Censys
 
       response = RestClient::Request.new(
         :method => :post,
-        :url => "#{@uri}/search/certificates",
+        :url => "#{@uri}/search/#{search_type}",
         :user => @uid,
         :password => @secret,
         :headers => { :accept => :json, :content_type => :json },
         :payload => payload.to_json
       ).execute
+
       results = JSON.parse(response.to_str)
     end
 
