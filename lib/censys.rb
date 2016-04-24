@@ -57,7 +57,7 @@ module Censys
 
       # "80.http.get.headers.server: Apache"
       payload = {
-        "query": keyword
+        :query => keyword
       }
 
       response = RestClient::Request.new(
