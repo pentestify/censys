@@ -2,6 +2,12 @@ require_relative "censys/version"
 require 'rest-client'
 require "json"
 
+###
+### Use Cases
+###
+###  - search_netblock:  23.0.0.0/8 or 8.8.8.0/24
+###
+
 module Censys
   class Api
 
@@ -31,28 +37,33 @@ module Censys
 
     end
 
-    def data
-      response = RestClient::Request.new(
-        :method => :get,
-        :url => "#{@uri}/data",
-        :user => @uid,
-        :password => @secret,
-        :headers => { :accept => :json, :content_type => :json }
-      ).execute
-    results = JSON.parse(response.to_str)
-    end
 
     # 80.http.get.headers.server
     def search_ipv4_index(query_string)
       _fetch_paginated_data(query_string, "ipv4")
     end
 
+    # In the IPv4 index, this is IP address (e.g., 192.168.1.1), 
+    def view_ipv4(ip)
+      _view(ip,"ipv4")
+    end
+
     def search_certificates_index(query_string)
       _fetch_paginated_data(query_string, "certificates")
     end
 
+    # SHA-256 fingerprint in the certificates index (e.g., 9d3b51a6b80daf76e074730f19dc01e643ca0c3127d8f48be64cf3302f6622cc).
+    def view_certificate(hash)
+      _view(hash,"certificates")
+    end
+
     def search_websites_index(query_string)
       _fetch_paginated_data(query_string, "websites")
+    end
+
+    # domain in the websites index (e.g., google.com) and 
+    def view_website(domain)
+      _view(ip,"websites")
     end
 
     private 
@@ -73,6 +84,24 @@ module Censys
 
         end
       end.lazy
+    end
+
+    def _view(name, type)
+      payload = {
+        :query => name,
+        :flatten => false,
+      }   
+      
+      response = RestClient::Request.new(
+        :method => :post,
+        :url => "#{@uri}/view/#{type}/#{name}",
+        :user => @uid,
+        :password => @secret,
+        :headers => { :accept => :json, :content_type => :json },
+        :payload => payload.to_json
+      ).execute
+
+    JSON.parse(response.to_str)
     end
 
 
