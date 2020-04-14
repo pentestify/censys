@@ -6,6 +6,8 @@ require "json"
 ### Use Cases
 ###
 ###  - search_netblock:  23.0.0.0/8 or 8.8.8.0/24
+###  - search_domain:  domain.com
+###  - search ip:  ip:8.8.8.8
 ###
 
 module Censys
@@ -36,7 +38,6 @@ module Censys
       end
 
     end
-
 
     # 80.http.get.headers.server
     def search_ipv4_index(query_string)
@@ -86,24 +87,18 @@ module Censys
       end.lazy
     end
 
-    def _view(name, type)
-      payload = {
-        :query => name,
-        :flatten => false,
-      }   
+    def _view(item_name, index_type="certificates")
       
       response = RestClient::Request.new(
-        :method => :post,
-        :url => "#{@uri}/view/#{type}/#{name}",
+        :method => :get,
+        :url => "#{@uri}/view/#{index_type}/#{item_name}",
         :user => @uid,
         :password => @secret,
-        :headers => { :accept => :json, :content_type => :json },
-        :payload => payload.to_json
+        :headers => { :accept => :json, :content_type => :json }
       ).execute
 
     JSON.parse(response.to_str)
     end
-
 
     # search_type should be one of ipv4, websites, certificates
     def _search(keyword,search_type="certificates",page=1)
