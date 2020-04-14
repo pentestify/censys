@@ -13,6 +13,7 @@ describe Censys do
     expect(result).to be_a(Enumerator)
     expect(result.first(3)).to be_a(Array)
     expect(result.first(3).first).to be_a(Hash)
+    
   end
  
 end

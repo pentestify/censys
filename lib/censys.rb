@@ -11,7 +11,6 @@ module Censys
       @uid = uid
       @secret = secret
 
-      
       config_file_path = "#{File.dirname(__FILE__)}/../config/config.json"
 
       # if we weren't passed a config
